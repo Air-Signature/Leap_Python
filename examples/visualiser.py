@@ -52,17 +52,6 @@ class Canvas:
             return bone.x,bone.y,-bone.z
         else:
             return None
-    # def get_fingertip_position(self, event):
-    #     if len(event.hands) == 0:
-    #         return
-    #     for i in range(0, len(event.hands)):
-    #         hand = event.hands[i]
-    #         for index_digit in range(0, 5):
-    #             digit = hand.digits[index_digit]
-    #             for index_bone in range(0, 4):
-    #                 bone = digit.bones[index_bone]
-    #                 if (hand.index.is_extended and hand.middle.is_extended==0 ):
-    #                     return self.get_joint_position(hand.index.distal.next_joint)
     def render_hands(self, event):
         
         self.output_image[:, :] = 0
