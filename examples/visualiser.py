@@ -14,7 +14,6 @@ _TRACKING_MODES = {
 
 
 
-
 class Canvas:
     def __init__(self):
         self.name = "Visualiser"
@@ -97,17 +96,6 @@ class Canvas:
                         self.Current_time = event.timestamp
                         cv2.circle(self.output_image, (x2,z2), 5, self.drawColor, -1)
                         
-                        
-                        # header = ['x', 'y', 'z']
-                        # csv_file_path = 'output.csv'
-                        # with open(csv_file_path, 'a', newline='') as csv_file:
-                        #     # Create a CSV writer
-                        #     csv_writer = csv.writer(csv_file)
-
-                        #     # Write data line by line
-                        #     X,Y,Z = self.get_Fingertip_position(hand.index.distal.next_joint)
-                        #     row = [X,Y,Z]
-                        #     csv_writer.writerow(row)
             
                         cv2.putText(
                             self.output_image,
@@ -214,26 +202,7 @@ class TrackingListener(leap.Listener):
 
     def on_tracking_event(self, event):
         self.canvas.render_hands(event)
-# fig = plt.figure()
-# ax = fig.add_subplot(111, projection='3d') 
 
-# def animate(i):
-#     header1 = "x"
-#     header2 = "y"
-#     header3 = "z"
-#     file_exists = os.path.isfile('output.csv')
-#     if not file_exists:
-#         time.sleep(100)
-#     data = pd.read_csv('output.csv')
-#     x = data[header1]
-#     y = data[header2]
-#     z = data[header3]
-
-#     plt.cla()
-
-#     ax.plot3D(x, z, y, 'red')
-
-# ani = FuncAnimation(plt.gcf(), animate, interval=50)
 
 def main():
     
@@ -278,6 +247,9 @@ def main():
             if(canvas.clearCanvas):
                 imgCanvas = np.zeros((canvas.screen_size[0], canvas.screen_size[1], 3), np.uint8)
                 canvas.clearCanvas = False
+                with open(csv_file_path, 'w', newline='') as csv_file:
+                    csv_writer = csv.writer(csv_file)
+                    csv_writer.writerow(header)
                 
             
             if(canvas.drawingMode==False):
@@ -288,24 +260,28 @@ def main():
                 x1,z1=0,0
                 canvas.position = (0,0)
             
+            if(canvas.drawingMode):
+                with open(csv_file_path, 'a', newline='') as csv_file:
+                    # Create a CSV writer
+                    csv_writer = csv.writer(csv_file)
+
+                    # Write data line by line
+                    X,Y,Z = canvas.actual_position
+                    row = [X,Y,Z]
+                    csv_writer.writerow(row)
+            
             # cv2.imshow("Imagecanvas", canvas.ImageCanvas)
             # cv2.imshow("canvas3", canvas3)
 
             x2,z2 = canvas.position
             # Actual_x2,Actual_y2,Actual_z2 = canvas.actual_position
             # Current_time_2 = canvas.Current_time
-            if(x1==0 and z1==0):
+            if(x1==0 and z1==0 and canvas.drawingMode):
                 x1 = x2
                 z1 = z2
-            # if(Current_time==0):
-            #     Current_time = Current_time_2
-            # if(Actual_x==0):
-            #     Actual_x,Actual_y,Actual_z = Actual_x2,Actual_y2,Actual_z2
-            # if(Current_time_2!=Current_time):
-                  
-            #     velocity_x = ((Actual_x2-Actual_x)/(Current_time_2-Current_time))*100000
-            #     print(velocity_x)
-            cv2.line(imgCanvas, (x1, z1), (x2, z2), canvas.drawColor, canvas.brushThickness)
+
+            if(x1!=0 and z1!=0 and canvas.drawingMode):
+                cv2.line(imgCanvas, (x1, z1), (x2, z2), canvas.drawColor, canvas.brushThickness)
                         
 
             # update previous point

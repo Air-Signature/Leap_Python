@@ -14,11 +14,10 @@ _TRACKING_MODES = {
 
 
 
-
 class Canvas:
     def __init__(self):
         self.name = "Visualiser"
-        self.screen_size = [500, 700]
+        self.screen_size = [600, 900]
         self.hands_colour = 	(0, 0, 255)
         self.font_colour = (0, 255, 44)
         self.hands_format = "Skeleton"
@@ -45,21 +44,15 @@ class Canvas:
 
     def get_joint_position(self, bone):
         if bone:
-            return int(bone.x + (self.screen_size[1] / 2)), int(bone.z + (self.screen_size[0] / 2))
-        else:
-            return None
+            return int(bone.x + (self.screen_size[1] / 2)), (-int(bone.y) +int (self.screen_size[1] / 2) ) 
+        
     def get_Fingertip_position(self, bone):
         if bone:
             return bone.x,bone.y,-bone.z
         else:
             return None
     def render_hands(self, event):
-        # header = ['x', 'y', 'z']
-        # csv_file_path = 'output.csv'
-        # file_exists = os.path.isfile(csv_file_path)
-        # if not file_exists:
-        #     csv_writer.writerow(header)
-        # Clear the previous image
+        
         self.output_image[:, :] = 0
         cv2.putText(
             self.output_image,
@@ -72,10 +65,16 @@ class Canvas:
         )
 
         if len(event.hands) == 0:
+            self.drawingMode = False
+            self.x1, self.z1 = 0, 0
+            self.position = (0,0)
             return
 
         if len(event.hands) > 1:
-                    return
+            self.drawingMode = False
+            self.x1, self.z1 = 0, 0
+            self.position = (0,0)
+            return
 
         for i in range(0, len(event.hands)):
             hand = event.hands[i]
@@ -83,32 +82,21 @@ class Canvas:
                 digit = hand.digits[index_digit]
                 for index_bone in range(0, 4):
                     bone = digit.bones[index_bone]
+                    x3,z3 = self.get_joint_position(hand.index.distal.next_joint)
+                    x4,z4 = self.get_joint_position(hand.middle.distal.next_joint)
+                    
                     if (hand.index.is_extended and hand.middle.is_extended==1 and hand.ring.is_extended==1 and hand.pinky.is_extended==0):
                         self.clearCanvas = True
 
-                    if (hand.index.is_extended and hand.middle.is_extended==0 ):
+                    if ((hand.index.is_extended and hand.middle.is_extended==0 )):
                         self.drawingMode = True
                         x2,z2 = self.get_joint_position(hand.index.distal.next_joint)
                         self.position = (x2,z2)
                         self.actual_position=self.get_Fingertip_position(hand.index.distal.next_joint)
                         self.Current_time = event.timestamp
-                        # cv2.circle(self.output_image, (x2,z2), 5, self.drawColor, -1)
+                        cv2.circle(self.output_image, (x2,z2), 5, self.drawColor, -1)
                         
                         
-                        # header = ['x', 'y', 'z']
-                        # csv_file_path = 'output.csv'
-                        # file_exists = os.path.isfile(csv_file_path)
-                        # with open(csv_file_path, 'a', newline='') as csv_file:
-                        #     # Create a CSV writer
-                        #     csv_writer = csv.writer(csv_file)
-
-                        #     if not file_exists:
-                        #         csv_writer.writerow(header)
-
-                        #     # Write data line by line
-                        #     X,Y,Z = self.get_Fingertip_position(hand.index.distal.next_joint)
-                        #     row = [X,Y,Z]
-                        #     csv_writer.writerow(row)
             
                         cv2.putText(
                             self.output_image,
@@ -139,8 +127,58 @@ class Canvas:
                             self.font_colour,
                             1,
                         )
-                   
+                    if self.hands_format == "Dots":
+                        prev_joint = self.get_joint_position(bone.prev_joint)
+                        next_joint = self.get_joint_position(bone.next_joint)
+                        if prev_joint:
+                            cv2.circle(self.output_image, prev_joint, 2, self.hands_colour, -1)
 
+                        if next_joint:
+                            cv2.circle(self.output_image, next_joint, 2, self.hands_colour, -1)
+
+                    if self.hands_format == "Skeleton":
+                        
+                        wrist = self.get_joint_position(hand.arm.next_joint)
+                        elbow = self.get_joint_position(hand.arm.prev_joint)
+                        if wrist:
+                            cv2.circle(self.output_image, wrist, 3, self.hands_colour, -1)
+
+                        if elbow:
+                            cv2.circle(self.output_image, elbow, 3, self.hands_colour, -1)
+
+                        if wrist and elbow:
+                            cv2.line(self.output_image, wrist, elbow, self.hands_colour, 2)
+
+                        bone_start = self.get_joint_position(bone.prev_joint)
+                        bone_end = self.get_joint_position(bone.next_joint)
+
+                        if bone_start:
+                            cv2.circle(self.output_image, bone_start, 3, self.hands_colour, -1)
+
+                        if bone_end:
+                            cv2.circle(self.output_image, bone_end, 3, self.hands_colour, -1)
+
+                        if bone_start and bone_end:
+                            cv2.line(self.output_image, bone_start, bone_end, self.hands_colour, 2)
+
+                        if ((index_digit == 0) and (index_bone == 0)) or (
+                            (index_digit > 0) and (index_digit < 4) and (index_bone < 2)
+                        ):
+                            index_digit_next = index_digit + 1
+                            digit_next = hand.digits[index_digit_next]
+                            bone_next = digit_next.bones[index_bone]
+                            bone_next_start = self.get_joint_position(bone_next.prev_joint)
+                            if bone_start and bone_next_start:
+                                cv2.line(
+                                    self.output_image,
+                                    bone_start,
+                                    bone_next_start,
+                                    self.hands_colour,
+                                    2,
+                                )
+
+                        if index_bone == 0 and bone_start and wrist:
+                            cv2.line(self.output_image, bone_start, wrist, self.hands_colour, 2)
 
 
 class TrackingListener(leap.Listener):
@@ -165,30 +203,39 @@ class TrackingListener(leap.Listener):
 
     def on_tracking_event(self, event):
         self.canvas.render_hands(event)
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d') 
+# fig = plt.figure()
+# ax = fig.add_subplot(111, projection='3d') 
 
-def animate(i):
-    header1 = "x"
-    header2 = "y"
-    header3 = "z"
-    file_exists = os.path.isfile('output.csv')
-    if not file_exists:
-        time.sleep(100)
-    data = pd.read_csv('output.csv')
-    x = data[header1]
-    y = data[header2]
-    z = data[header3]
+# def animate(i):
+#     header1 = "x"
+#     header2 = "y"
+#     header3 = "z"
+#     file_exists = os.path.isfile('output.csv')
+#     if not file_exists:
+#         time.sleep(100)
+#     data = pd.read_csv('output.csv')
+#     x = data[header1]
+#     y = data[header2]
+#     z = data[header3]
 
-    plt.cla()
+#     plt.cla()
 
-    ax.plot3D(x, z, y, 'red')
+#     ax.plot3D(x, z, y, 'red')
 
-ani = FuncAnimation(plt.gcf(), animate, interval=50)
+# ani = FuncAnimation(plt.gcf(), animate, interval=50)
 
 def main():
     
     canvas = Canvas()
+
+    print(canvas.name)
+    print("")
+    print("Press <key> in visualiser window to:")
+    print("  x: Exit")
+    print("  h: Select HMD tracking mode")
+    print("  s: Select ScreenTop tracking mode")
+    print("  d: Select Desktop tracking mode")
+    print("  f: Toggle hands format between Skeleton/Dots")
 
     tracking_listener = TrackingListener(canvas)
 
@@ -196,24 +243,73 @@ def main():
     connection.add_listener(tracking_listener)
 
     running = True
-
+            
     with connection.open():
-        connection.set_tracking_mode(leap.TrackingMode.Desktop)        
-        plt.tight_layout()
-        plt.show()
-         
-        while running:
-            if(canvas.clearCanvas):
-                canvas.clearCanvas = False
-                df = pd.read_csv('output.csv')
-                df = df.head(1)
-                df.to_csv('output.csv', index=False)
-                df = pd.read_csv('output.csv', nrows=1)
+        connection.set_tracking_mode(leap.TrackingMode.Desktop)
+        canvas.set_tracking_mode(leap.TrackingMode.Desktop)
+        imgCanvas = np.zeros((canvas.screen_size[0], canvas.screen_size[1], 3), np.uint8)
+        
+        # plt.tight_layout()
+        # plt.show()
+        x1,z1 = 0, 0  
 
-                
+        while running:
+            frame = canvas.output_image
+            if(canvas.clearCanvas):
+                imgCanvas = np.zeros((canvas.screen_size[0], canvas.screen_size[1], 3), np.uint8)
+                canvas.clearCanvas = False
+            
+            if(canvas.drawingMode==False):
+                # Actual_x,Actual_y,Actual_z = 0,0,0
+                # canvas.actual_position = (0,0,0)
+                # canvas.Current_time = 0
+                # Current_time = 0
+                x1,z1=0,0
+                canvas.position = (0,0)
+            
+            
+            # cv2.imshow("Imagecanvas", canvas.ImageCanvas)
+            # cv2.imshow("canvas3", canvas3)
+
+            x2,z2 = canvas.position
+            # Actual_x2,Actual_y2,Actual_z2 = canvas.actual_position
+            # Current_time_2 = canvas.Current_time
+            if(x1==0 and z1==0 and canvas.drawingMode):
+                x1 = x2
+                z1 = z2
+
+            if(x1!=0 and z1!=0 and canvas.drawingMode):
+                cv2.line(imgCanvas, (x1, z1), (x2, z2), canvas.drawColor, canvas.brushThickness)
+                        
+
+            # update previous point
+            x1, z1 = x2, z2
             
 
+            
+            imgGray = cv2.cvtColor(imgCanvas, cv2.COLOR_BGR2GRAY)
+            _, imgInv = cv2.threshold(imgGray, 50, 255, cv2.THRESH_BINARY_INV)
+            imgInv = cv2.cvtColor(imgInv, cv2.COLOR_GRAY2BGR)
+            frame = cv2.bitwise_and(frame, imgInv)
+            frame = cv2.bitwise_or(frame, imgCanvas)
 
+            # Show image
+            cv2.imshow(canvas.name, frame)
+
+
+
+            key = cv2.waitKey(1)
+
+            if key == ord("x"):
+                break
+            elif key == ord("h"):
+                connection.set_tracking_mode(leap.TrackingMode.HMD)
+            elif key == ord("s"):
+                connection.set_tracking_mode(leap.TrackingMode.ScreenTop)
+            elif key == ord("d"):
+                connection.set_tracking_mode(leap.TrackingMode.Desktop)
+            elif key == ord("f"):
+                canvas.toggle_hands_format()
 
 
 if __name__ == "__main__":
