@@ -25,15 +25,19 @@ class Canvas:
         self.tracking_mode = None
 
         self.drawingMode = False
-        self.x1, self.z1 = 0,0
+        self.x1, self.y1 = 0,0
         self.ImageCanvas = np.zeros((self.screen_size[0], self.screen_size[1], 3), np.uint8)
         self.drawColor = (141, 43, 193)
-        self.brushThickness = 5
+        self.brushThickness = 4
         self.smooth = 3
         self.position = (0,0)
         self.clearCanvas = False
         self.actual_position = (0,0,0)
-        self.Current_time = 0
+        self.frameRate = 1
+        self.palm_velocity = 0
+        self.palm_Position = 0
+        self.hand_grab_angle = 0
+        self.hand_grab_strength = 0
 
     def set_tracking_mode(self, tracking_mode):
         self.tracking_mode = tracking_mode
@@ -66,14 +70,16 @@ class Canvas:
 
         if len(event.hands) == 0:
             self.drawingMode = False
-            self.x1, self.z1 = 0, 0
+            self.x1, self.y1 = 0, 0
             self.position = (0,0)
+            self.actual_position = (0,0,0)
             return
 
         if len(event.hands) > 1:
             self.drawingMode = False
-            self.x1, self.z1 = 0, 0
+            self.x1, self.y1 = 0, 0
             self.position = (0,0)
+            self.actual_position = (0,0,0)
             return
 
         for i in range(0, len(event.hands)):
@@ -82,19 +88,20 @@ class Canvas:
                 digit = hand.digits[index_digit]
                 for index_bone in range(0, 4):
                     bone = digit.bones[index_bone]
-                    x3,z3 = self.get_joint_position(hand.index.distal.next_joint)
-                    x4,z4 = self.get_joint_position(hand.middle.distal.next_joint)
                     
                     if (hand.index.is_extended and hand.middle.is_extended==1 and hand.ring.is_extended==1 and hand.pinky.is_extended==0):
                         self.clearCanvas = True
 
-                    if ((hand.index.is_extended and hand.middle.is_extended==0 )):
+                    if ((hand.index.is_extended and hand.middle.is_extended==0)):
                         self.drawingMode = True
-                        x2,z2 = self.get_joint_position(hand.index.distal.next_joint)
-                        self.position = (x2,z2)
+                        x2,y2 = self.get_joint_position(hand.index.distal.next_joint)
+                        self.position = (x2,y2)
                         self.actual_position=self.get_Fingertip_position(hand.index.distal.next_joint)
-                        self.Current_time = event.timestamp
-                        cv2.circle(self.output_image, (x2,z2), 5, self.drawColor, -1)
+                        # self.Current_time = event.timestamp
+                        self.frameRate = event.framerate
+                        self.palm_velocity = hand.palm.velocity
+                        self.palm_Position = hand.palm.position
+                        cv2.circle(self.output_image, (x2,y2), 4, self.drawColor, -1)
                         
             
                         cv2.putText(
@@ -109,13 +116,13 @@ class Canvas:
                     else: self.drawingMode = False
                         # # smoothening
                         # x2 = self.x1 + (x2 - self.x1) // self.smooth
-                        # z2 = self.z1 + (z2 - self.z1) // self.smooth
+                        # y2 = self.y1 + (y2 - self.y1) // self.smooth
 
                     if (hand.index.is_extended and hand.middle.is_extended ):
                         self.drawingMode = False
-                        self.x1, self.z1 = 0, 0
+                        self.x1, self.y1 = 0, 0
                         self.position = (0,0)
-                        self.Current_time=0
+                    
                         self.actual_position = (0,0,0)
                         cv2.putText(
                             self.output_image,
@@ -223,8 +230,10 @@ def main():
     connection.add_listener(tracking_listener)
 
     running = True
-    header = ['x', 'y', 'z']
-    csv_file_path = 'output.csv'
+    header = ['index_x_coor', 'index_y_coor', 'index_z_coor' ,'palm_x_coor','palm_y_coor','palm_z_coor',
+              'index_x_velocity','index_y_velocity','index_z_velocity',
+              'palm_velocity_x','palm_velocity_y','palm_velocity_z']
+    csv_file_path = 'Signatures/Object_Vinojith/{FileName}.csv'.format(FileName = input("Enter File Count : "))
     file_exists = os.path.isfile(csv_file_path)
     with open(csv_file_path, 'a', newline='') as csv_file:
         # Create a CSV writer
@@ -240,8 +249,8 @@ def main():
         
         # plt.tight_layout()
         # plt.show()
-        x1,z1 = 0, 0  
-
+        x1,y1 = 0, 0  
+        Actual_x,Actual_y,Actual_z = 0,0,0
         while running:
             frame = canvas.output_image
             if(canvas.clearCanvas):
@@ -253,39 +262,58 @@ def main():
                 
             
             if(canvas.drawingMode==False):
-                # Actual_x,Actual_y,Actual_z = 0,0,0
-                # canvas.actual_position = (0,0,0)
+                Actual_x,Actual_y,Actual_z = 0,0,0
+                canvas.actual_position = (0,0,0)
                 # canvas.Current_time = 0
                 # Current_time = 0
-                x1,z1=0,0
+                x1,y1=0,0
                 canvas.position = (0,0)
             
-            if(canvas.drawingMode):
-                with open(csv_file_path, 'a', newline='') as csv_file:
-                    # Create a CSV writer
-                    csv_writer = csv.writer(csv_file)
-
-                    # Write data line by line
-                    X,Y,Z = canvas.actual_position
-                    row = [X,Y,Z]
-                    csv_writer.writerow(row)
             
             # cv2.imshow("Imagecanvas", canvas.ImageCanvas)
             # cv2.imshow("canvas3", canvas3)
 
-            x2,z2 = canvas.position
-            # Actual_x2,Actual_y2,Actual_z2 = canvas.actual_position
+            x2,y2 = canvas.position
+            # X,Y,Z = canvas.actual_position
+            Actual_x2,Actual_y2,Actual_z2 = canvas.actual_position
             # Current_time_2 = canvas.Current_time
-            if(x1==0 and z1==0 and canvas.drawingMode):
+            if(x1==0 and y1==0 and canvas.drawingMode):
+                Actual_x,Actual_y,Actual_z =  Actual_x2,Actual_y2,Actual_z2
                 x1 = x2
-                z1 = z2
+                y1 = y2
 
-            if(x1!=0 and z1!=0 and canvas.drawingMode):
-                cv2.line(imgCanvas, (x1, z1), (x2, z2), canvas.drawColor, canvas.brushThickness)
+            if(x1!=0 and y1!=0 and canvas.drawingMode):
+                cv2.line(imgCanvas, (x1, y1), (x2, y2), canvas.drawColor, canvas.brushThickness)
+                
+                palmVelocity = canvas.palm_velocity
+                
+                palm_Position = canvas.palm_Position
+                pvx = palmVelocity.x
+                pvy = palmVelocity.y
+                pvz = palmVelocity.z
+                
+                px = palm_Position.x
+                py = palm_Position.y
+                pz = palm_Position.z
+                with open(csv_file_path, 'a', newline='') as csv_file:
+                    # Create a CSV writer
+                    csv_writer = csv.writer(csv_file)
+
+
+                    # Write data line by line
+                    X,Y,Z = canvas.actual_position
+                    xv = (Actual_x2-Actual_x)*canvas.frameRate
+                    yv = (Actual_y2-Actual_y)*canvas.frameRate
+                    zv = (Actual_z2-Actual_z)*canvas.frameRate
+                    if (xv==yv==zv==0.0):
+                        continue
+                    row = [X,Y,Z,px,py,pz,xv,yv,zv,pvx,pvy,pvz]
+                    csv_writer.writerow(row)
                         
 
             # update previous point
-            x1, z1 = x2, z2
+            x1, y1 = x2, y2
+            Actual_x,Actual_y,Actual_z =  Actual_x2,Actual_y2,Actual_z2
             
 
             

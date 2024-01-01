@@ -18,10 +18,11 @@ index = count()
 
 
 def animate(i):
-    data = pd.read_csv('output.csv')
-    x = data[header1]
-    z = data[header2]
-    y = data[header3]
+    df = pd.read_csv('Signatures/Object_Vinojith/1.csv')
+    x = df['index_x_coor']
+    y = df['index_y_coor']
+    z = df['index_z_coor']
+
 
     plt.cla()
 

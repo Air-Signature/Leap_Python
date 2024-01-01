@@ -1,0 +1,6 @@
+_data: <cdata 'struct _LEAP_BONE &' 0x000002292177C800>
+c_data: <cdata 'struct _LEAP_BONE &' 0x000002292177C800>
+next_joint: <leap.datatypes.Vector object at 0x0000022922A91910>
+prev_joint: <leap.datatypes.Vector object at 0x0000022922A919A0>
+rotation: <leap.datatypes.Quaternion object at 0x0000022922A91DF0>
+width: 15.540456771850586
