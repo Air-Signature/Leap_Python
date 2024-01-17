@@ -56,7 +56,7 @@ class RealTime3DPlot(QMainWindow):
 
 def main():
     app = QApplication(sys.argv)
-    df = pd.read_csv('1.csv')
+    df = pd.read_csv('../Signatures/Object_Vinojith/1.csv')
     mainWindow = RealTime3DPlot(df)
     sys.exit(app.exec_())
 
