@@ -27,7 +27,7 @@ class MyListener(leap.Listener):
         print(f"Found device {info.serial}")
 
     def on_tracking_event(self, event):
-        attributes = dir(event)
+        # attributes = dir(event)
 
         # # Print each attribute and its value
         # for attribute in attributes:
@@ -49,19 +49,19 @@ class MyListener(leap.Listener):
 
 
             # --------------
-            # attributes = dir(hand.index.distal)
+            attributes = dir(hand.palm.orientation)
 
             # # Print each attribute and its value
-            # for attribute in attributes:
-            #     # Exclude attributes that start with '__' (internal attributes)
-            #     if not attribute.startswith('__'):
-            #         value = getattr(hand.index.distal, attribute)
-            #         print(f"{attribute}: {value}")
+            for attribute in attributes:
+                # Exclude attributes that start with '__' (internal attributes)
+                if not attribute.startswith('__'):
+                    value = getattr(hand.palm.orientation, attribute)
+                    print(f"{attribute}: {value}")
             hand_type = "left" if str(hand.type) == "HandType.Left" else "right"
-            print(hand.palm.orientation.x)
-            # print(
-            #     f"Hand id {hand.id} is a {hand_type} hand with palm velocity position ({hand.palm.position.x}, {hand.palm.position.y}, {hand.palm.position.z})."
-            # )
+            
+            print(
+                f"Hand id {hand.id} is a {hand_type} hand with palm velocity position ({hand.palm.position.x}, {hand.palm.position.y}, {hand.palm.position.z})."
+            )
 
             # The position of the end of the bone closest to the finger tip
             # print(
@@ -105,17 +105,17 @@ def main():
 
     #     if not file_exists:
     #         csv_writer.writerow(header)
-    folder = input("Enter Subject Name : ")
-    folder_path = Path('Signatures/{folerName}'.format(folerName = folder))
+    # folder = input("Enter Subject Name : ")
+    # folder_path = Path('Signatures/{folerName}'.format(folerName = folder))
 
 # Create the folder
-    try:
-        folder_path.mkdir()
-        print(f"Folder created at {folder_path}")
-    except FileExistsError:
-        print(f"Folder already exists at {folder_path}")
-    except Exception as e:
-        print(f"An error occurred: {e}")   
+    # try:
+    #     folder_path.mkdir()
+    #     print(f"Folder created at {folder_path}")
+    # except FileExistsError:
+    #     print(f"Folder already exists at {folder_path}")
+    # except Exception as e:
+    #     print(f"An error occurred: {e}")   
         
             
     with connection.open():

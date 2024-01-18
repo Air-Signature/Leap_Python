@@ -5,6 +5,7 @@ import csv, os ,time
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+from leap import datatypes as ldt
 
 _TRACKING_MODES = {
     leap.TrackingMode.Desktop: "Desktop",
@@ -13,7 +14,23 @@ _TRACKING_MODES = {
 }
 
 
+def location_end_of_finger(hand: ldt.Hand, digit_idx: int) -> ldt.Vector:
+    digit = hand.digits[digit_idx]
+    return digit.distal.next_joint
 
+
+def sub_vectors(v1: ldt.Vector, v2: ldt.Vector) -> list:
+    return map(float.__sub__, v1, v2)
+
+
+def fingers_pinching(middle: ldt.Vector, index: ldt.Vector):
+    diff = list(map(abs, sub_vectors(middle, index)))
+
+    if diff[0] < 20 and diff[1] < 20 and diff[2] < 20:
+        return True, diff
+    else:
+        return False, diff
+        
 class Canvas:
     def __init__(self):
         self.name = "Visualiser"
@@ -38,6 +55,10 @@ class Canvas:
         self.palm_Position = 0
         self.hand_grab_angle = 0
         self.hand_grab_strength = 0
+        self.confidence = 0
+        self.fingertip_rotation = 0
+        self.arm_position = 0
+        
 
     def set_tracking_mode(self, tracking_mode):
         self.tracking_mode = tracking_mode
@@ -55,6 +76,8 @@ class Canvas:
             return bone.x,bone.y,-bone.z
         else:
             return None
+        
+
     def render_hands(self, event):
         
         self.output_image[:, :] = 0
@@ -84,15 +107,19 @@ class Canvas:
 
         for i in range(0, len(event.hands)):
             hand = event.hands[i]
+            middle = location_end_of_finger(hand, 2)
+            index = location_end_of_finger(hand, 1)
+            pinching, array = fingers_pinching(middle, index)
+            
             for index_digit in range(0, 5):
                 digit = hand.digits[index_digit]
                 for index_bone in range(0, 4):
                     bone = digit.bones[index_bone]
                     
-                    if (hand.index.is_extended and hand.middle.is_extended==1 and hand.ring.is_extended==1 and hand.pinky.is_extended==0):
+                    if (hand.index.is_extended and hand.middle.is_extended==1 and hand.ring.is_extended==1 and hand.pinky.is_extended==0 and not pinching):
                         self.clearCanvas = True
 
-                    if ((hand.index.is_extended and hand.middle.is_extended==0)):
+                    if ((hand.index.is_extended and hand.middle.is_extended==0) or (pinching and hand.index.is_extended and hand.middle.is_extended) ):
                         self.drawingMode = True
                         x2,y2 = self.get_joint_position(hand.index.distal.next_joint)
                         self.position = (x2,y2)
@@ -101,6 +128,11 @@ class Canvas:
                         self.frameRate = event.framerate
                         self.palm_velocity = hand.palm.velocity
                         self.palm_Position = hand.palm.position
+                        self.arm_position = hand.arm.next_joint
+                        self.fingertip_rotation = hand.index.distal.rotation
+                        self.hand_grab_angle = hand.grab_angle
+                        self.hand_grab_strength = hand.grab_strength
+                        self.confidence = hand.confidence
                         cv2.circle(self.output_image, (x2,y2), 4, self.drawColor, -1)
                         
             
@@ -118,7 +150,7 @@ class Canvas:
                         # x2 = self.x1 + (x2 - self.x1) // self.smooth
                         # y2 = self.y1 + (y2 - self.y1) // self.smooth
 
-                    if (hand.index.is_extended and hand.middle.is_extended ):
+                    if (hand.index.is_extended and hand.middle.is_extended and not pinching ):
                         self.drawingMode = False
                         self.x1, self.y1 = 0, 0
                         self.position = (0,0)
@@ -232,8 +264,9 @@ def main():
     running = True
     header = ['index_x_coor', 'index_y_coor', 'index_z_coor' ,'palm_x_coor','palm_y_coor','palm_z_coor',
               'index_x_velocity','index_y_velocity','index_z_velocity',
-              'palm_velocity_x','palm_velocity_y','palm_velocity_z']
-    csv_file_path = 'Signatures/Object_Vinojith/{FileName}.csv'.format(FileName = input("Enter File Count : "))
+              'palm_velocity_x','palm_velocity_y','palm_velocity_z','confidence',
+              'hand_grab_angle','hand_grab_strength','armPosition_x','armPosition_y','armPosition_z','tip_rotation_x','tip_rotation_y','tip_rotation_z','tip_rotation_w','target']
+    csv_file_path = 'Signatures/Object_Bird/{FileName}.csv'.format(FileName = input("Enter File Count : "))
     file_exists = os.path.isfile(csv_file_path)
     with open(csv_file_path, 'a', newline='') as csv_file:
         # Create a CSV writer
@@ -286,8 +319,24 @@ def main():
                 cv2.line(imgCanvas, (x1, y1), (x2, y2), canvas.drawColor, canvas.brushThickness)
                 
                 palmVelocity = canvas.palm_velocity
-                
+                confindence = canvas.confidence
                 palm_Position = canvas.palm_Position
+                grab_angle = canvas.hand_grab_angle
+                grab_strength = canvas.hand_grab_strength
+                arm_position = canvas.arm_position
+                finger_rotation = canvas.fingertip_rotation
+                target = 1
+                
+                ax = arm_position.x
+                ay = arm_position.y
+                az = arm_position.z
+                
+                
+                tr_x = finger_rotation.x
+                tr_y = finger_rotation.y
+                tr_z = finger_rotation.z
+                tr_w = finger_rotation.w
+                
                 pvx = palmVelocity.x
                 pvy = palmVelocity.y
                 pvz = palmVelocity.z
@@ -307,7 +356,10 @@ def main():
                     zv = (Actual_z2-Actual_z)*canvas.frameRate
                     if (xv==yv==zv==0.0):
                         continue
-                    row = [X,Y,Z,px,py,pz,xv,yv,zv,pvx,pvy,pvz]
+                    row = [X,Y,Z,px,py,pz,xv,yv,zv,pvx,pvy,pvz,
+                           confindence,grab_angle,grab_strength,
+                           ax,ay,az,tr_x,tr_y,tr_z,tr_w,target
+                           ]
                     csv_writer.writerow(row)
                         
 
