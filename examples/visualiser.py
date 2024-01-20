@@ -267,13 +267,11 @@ def main():
               'palm_velocity_x','palm_velocity_y','palm_velocity_z','confidence',
               'hand_grab_angle','hand_grab_strength','armPosition_x','armPosition_y','armPosition_z','tip_rotation_x','tip_rotation_y','tip_rotation_z','tip_rotation_w','target']
     csv_file_path = 'Signatures/Object_Bird/{FileName}.csv'.format(FileName = input("Enter File Count : "))
-    file_exists = os.path.isfile(csv_file_path)
-    with open(csv_file_path, 'a', newline='') as csv_file:
+
+    with open(csv_file_path, 'w', newline='') as csv_file:
         # Create a CSV writer
         csv_writer = csv.writer(csv_file)
-
-        if not file_exists:
-            csv_writer.writerow(header)
+        csv_writer.writerow(header)
             
     with connection.open():
         connection.set_tracking_mode(leap.TrackingMode.Desktop)
