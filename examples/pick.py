@@ -4,13 +4,13 @@ from mpl_toolkits.mplot3d import Axes3D
 from PyQt5.QtWidgets import QApplication, QMainWindow, QSizePolicy, QVBoxLayout, QWidget
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import pandas as pd
-
+from datetime import datetime
 class RealTime3DPlot(QMainWindow):
 
-    def __init__(self, df):
+    def __init__(self, df,csv_file_path):
         
         super().__init__()
-
+        self.csv_file_path = csv_file_path
         self.df = df
         self.new_df = self.df.copy()
 
@@ -45,23 +45,35 @@ class RealTime3DPlot(QMainWindow):
         self.show()
 
     def on_pick(self, event):
-        ind = event.ind
+        ind = list(set(event.ind))  # Convert to set to eliminate duplicates
         print(ind)
         # Remove selected points from the DataFrame
         self.df.drop(self.df.index[ind], inplace=True)
+        
         for i in ind:
             self.new_df.at[self.new_df.index[i], 'target'] = 0
+        
         # Update the scatter plot
         self.scatter._offsets3d = (self.df['index_x_coor'], self.df['index_y_coor'], self.df['index_z_coor'])
         self.canvas.draw()
 
+
     def save_dataframe_to_csv(self):
-        self.new_df.to_csv('Updated2.csv', index=False)
+        
+        now = datetime.now() 
+        date_time = now.strftime("%m.%d.%Y_%H.%M.%S")
+        # csv_file_name = 'Signatures/{FileName}.csv'.format(FileName = self.csv_file_path+"_"+date_time)
+        csv_file_name = 'Signatures/{FileName}.csv'.format(FileName = self.csv_file_path)
+        
+        self.new_df.to_csv(csv_file_name, index=False)
 
 def main():
+    FileName = input("Enter File Name : ")
+    csv_file_path = 'Signatures/{FileName}.csv'.format(FileName = FileName)
     app = QApplication(sys.argv)
-    df = pd.read_csv('Signatures/Object_Bird/2.csv')
-    mainWindow = RealTime3DPlot(df)
+    df = pd.read_csv(csv_file_path)
+    df  = df.loc[df['target'] != 0]
+    mainWindow = RealTime3DPlot(df,FileName)
 
     # Connect the save_dataframe_to_csv method to the application's aboutToQuit signal
     app.aboutToQuit.connect(mainWindow.save_dataframe_to_csv)

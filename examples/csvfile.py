@@ -30,25 +30,38 @@
 #     csvwriter.writerows(rows)
 
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
-# Data for the 2D line
-x = [1, 2, 3, 4, 5]
+# # Data for the 2D line
+# x = [1, 2, 3, 4, 5]
 
-y = [2, 4, 6, 8, 10]
+# y = [2, 4, 6, 8, 10]
 
-# Create a 2D plot
-plt.plot(x, y, marker="o", linestyle="-", color="blue", label="Line Example")
+# # Create a 2D plot
+# plt.plot(x, y, marker="o", linestyle="-", color="blue", label="Line Example")
 
-# Set axis labels
-plt.xlabel("X-axis")
-plt.ylabel("Y-axis")
+# # Set axis labels
+# plt.xlabel("X-axis")
+# plt.ylabel("Y-axis")
 
-# Set plot title
-plt.title("2D Line Plot Example")
+# # Set plot title
+# plt.title("2D Line Plot Example")
 
-# Add a legend
-plt.legend()
+# # Add a legend
+# plt.legend()
 
-# Show the plot
-plt.show()
+# # Show the plot
+# plt.show()
+
+
+
+from datetime import datetime
+
+now = datetime.now() # current date and time
+
+year = now.strftime("%Y")
+print("year:", year)
+
+
+date_time = now.strftime("%m.%d.%Y_%H.%M.%S")
+print("date and time:",date_time)
