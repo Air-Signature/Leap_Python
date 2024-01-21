@@ -137,8 +137,7 @@ class Canvas:
                             self.font_colour,
                             1,
                         )
-                    
-                    if (hand.index.is_extended and hand.middle.is_extended and hand.ring.is_extended and hand.pinky.is_extended ==0 and hand.thumb.is_extended ==0):
+                    if (hand.index.is_extended and hand.middle.is_extended and hand.ring.is_extended and hand.pinky.is_extended and hand.thumb.is_extended):
                         self.clearCanvas = True
                         self.drawingMode = False
 
@@ -170,7 +169,7 @@ class Canvas:
                         # )
 
 
-                    if (hand.index.is_extended and hand.middle.is_extended and hand.ring.is_extended and hand.pinky.is_extended and hand.thumb.is_extended):
+                    if (hand.index.is_extended and hand.middle.is_extended and hand.ring.is_extended and hand.pinky.is_extended ==0 and hand.thumb.is_extended ==0):
                         self.drawingMode = False
                         self.x1, self.y1 = 0, 0
                         self.position = (0,0)
