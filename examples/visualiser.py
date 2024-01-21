@@ -112,7 +112,13 @@ class Canvas:
                 digit = hand.digits[index_digit]
                 for index_bone in range(0, 4):
                     bone = digit.bones[index_bone]
-
+                    if (hand.grab_strength==1.0):
+                        self.drawingMode = False
+                        self.x1, self.y1 = 0, 0
+                        self.position = (0,0)
+                        self.actual_position = (0,0,0)
+                        return
+    
                     if (self.drawingMode):
                         x2, y2 = self.get_joint_position(hand.index.distal.next_joint)
                         self.position = (x2, y2)
