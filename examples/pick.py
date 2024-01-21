@@ -56,11 +56,11 @@ class RealTime3DPlot(QMainWindow):
         self.canvas.draw()
 
     def save_dataframe_to_csv(self):
-        self.new_df.to_csv('Updated2.csv', index=False)
+        self.new_df.to_csv('Signatures/Object_Vinojith/Updated1.csv', index=False)
 
 def main():
     app = QApplication(sys.argv)
-    df = pd.read_csv('Signatures/Object_Bird/2.csv')
+    df = pd.read_csv('Signatures/Object_Vinojith/Updated1.csv')
     mainWindow = RealTime3DPlot(df)
 
     # Connect the save_dataframe_to_csv method to the application's aboutToQuit signal

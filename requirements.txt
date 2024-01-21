@@ -2,3 +2,6 @@ build
 cffi
 opencv-python
 numpy
+matplotlib
+pandas
+PyQt5
