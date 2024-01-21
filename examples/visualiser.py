@@ -112,7 +112,13 @@ class Canvas:
                 digit = hand.digits[index_digit]
                 for index_bone in range(0, 4):
                     bone = digit.bones[index_bone]
-
+                    if (hand.grab_strength==1.0):
+                        self.drawingMode = False
+                        self.x1, self.y1 = 0, 0
+                        self.position = (0,0)
+                        self.actual_position = (0,0,0)
+                        return
+    
                     if (self.drawingMode):
                         x2, y2 = self.get_joint_position(hand.index.distal.next_joint)
                         self.position = (x2, y2)
@@ -137,7 +143,8 @@ class Canvas:
                             self.font_colour,
                             1,
                         )
-                    if (hand.index.is_extended and hand.middle.is_extended and hand.ring.is_extended and hand.pinky.is_extended and hand.thumb.is_extended):
+                    
+                    if (hand.index.is_extended and hand.middle.is_extended and hand.ring.is_extended and hand.pinky.is_extended ==0 and hand.thumb.is_extended ==0):
                         self.clearCanvas = True
                         self.drawingMode = False
 
@@ -169,7 +176,7 @@ class Canvas:
                         # )
 
 
-                    if (hand.index.is_extended and hand.middle.is_extended and hand.ring.is_extended and hand.pinky.is_extended ==0 and hand.thumb.is_extended ==0):
+                    if (hand.index.is_extended and hand.middle.is_extended and hand.ring.is_extended and hand.pinky.is_extended and hand.thumb.is_extended):
                         self.drawingMode = False
                         self.x1, self.y1 = 0, 0
                         self.position = (0,0)
