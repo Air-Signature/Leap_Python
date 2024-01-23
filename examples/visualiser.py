@@ -55,6 +55,7 @@ class Canvas:
         self.confidence = 0
         self.fingertip_rotation = 0
         self.arm_position = 0
+        self.frame_id=0
         
 
     def set_tracking_mode(self, tracking_mode):
@@ -124,6 +125,7 @@ class Canvas:
                         self.position = (x2, y2)
                         self.actual_position = self.get_Fingertip_position(hand.index.distal.next_joint)
                         # self.Current_time = event.timestamp
+                        self.frame_id= event.tracking_frame_id
                         self.frameRate = event.framerate
                         self.palm_velocity = hand.palm.velocity
                         self.palm_Position = hand.palm.position
@@ -144,39 +146,16 @@ class Canvas:
                             1,
                         )
                     
-                    if (hand.index.is_extended and hand.middle.is_extended and hand.ring.is_extended and hand.pinky.is_extended and hand.thumb.is_extended):
+                    if (hand.index.is_extended and hand.middle.is_extended==0 and hand.ring.is_extended==0 and hand.pinky.is_extended and hand.thumb.is_extended):
                         self.clearCanvas = True
                         self.drawingMode = False
 
                     if (hand.index.is_extended and  hand.middle.is_extended == 0 and hand.ring.is_extended ==0 and hand.pinky.is_extended ==0 and hand.thumb.is_extended ==0):
                         self.drawingMode = True
-                        # x2,y2 = self.get_joint_position(hand.index.distal.next_joint)
-                        # self.position = (x2,y2)
-                        # self.actual_position=self.get_Fingertip_position(hand.index.distal.next_joint)
-                        # # self.Current_time = event.timestamp
-                        # self.frameRate = event.framerate
-                        # self.palm_velocity = hand.palm.velocity
-                        # self.palm_Position = hand.palm.position
-                        # self.arm_position = hand.arm.next_joint
-                        # self.fingertip_rotation = hand.index.distal.rotation
-                        # self.hand_grab_angle = hand.grab_angle
-                        # self.hand_grab_strength = hand.grab_strength
-                        # self.confidence = hand.confidence
-                        # cv2.circle(self.output_image, (x2,y2), 4, self.drawColor, -1)
-                        #
-                        #
-                        # cv2.putText(
-                        #     self.output_image,
-                        #     "Drawing Mode: Index Finger",
-                        #     (10, self.screen_size[0] - 25),
-                        #     cv2.FONT_HERSHEY_SIMPLEX,
-                        #     0.5,
-                        #     self.font_colour,
-                        #     1,
-                        # )
 
 
-                    if (hand.index.is_extended and hand.middle.is_extended and hand.ring.is_extended and hand.pinky.is_extended ==0 and hand.thumb.is_extended ==0):
+
+                    if (hand.index.is_extended and hand.middle.is_extended and hand.ring.is_extended and hand.pinky.is_extended  and hand.thumb.is_extended ):
                         self.drawingMode = False
                         self.x1, self.y1 = 0, 0
                         self.position = (0,0)
@@ -288,7 +267,7 @@ def main():
     connection.add_listener(tracking_listener)
 
     running = True
-    header = ['index_x_coor', 'index_y_coor', 'index_z_coor' ,'palm_x_coor','palm_y_coor','palm_z_coor',
+    header = ['frame_id','index_x_coor', 'index_y_coor', 'index_z_coor' ,'palm_x_coor','palm_y_coor','palm_z_coor',
               'index_x_velocity','index_y_velocity','index_z_velocity',
               'palm_velocity_x','palm_velocity_y','palm_velocity_z','confidence',
               'hand_grab_angle','hand_grab_strength','armPosition_x','armPosition_y','armPosition_z','tip_rotation_x','tip_rotation_y','tip_rotation_z','tip_rotation_w','target']
@@ -341,7 +320,8 @@ def main():
 
             if(x1!=0 and y1!=0 and canvas.drawingMode):
                 cv2.line(imgCanvas, (x1, y1), (x2, y2), canvas.drawColor, canvas.brushThickness)
-                
+
+                frame_id= canvas.frame_id
                 palmVelocity = canvas.palm_velocity
                 confindence = canvas.confidence
                 palm_Position = canvas.palm_Position
@@ -380,7 +360,7 @@ def main():
                     zv = (Actual_z2-Actual_z)*canvas.frameRate
                     if (xv==yv==zv==0.0):
                         continue
-                    row = [X,Y,Z,px,py,pz,xv,yv,zv,pvx,pvy,pvz,
+                    row = [frame_id,X,Y,Z,px,py,pz,xv,yv,zv,pvx,pvy,pvz,
                            confindence,grab_angle,grab_strength,
                            ax,ay,az,tr_x,tr_y,tr_z,tr_w,target
                            ]

@@ -5,3 +5,4 @@ numpy
 matplotlib
 pandas
 PyQt5
+jupyter

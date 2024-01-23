@@ -52,13 +52,13 @@ class MyListener(leap.Listener):
         # print(f"Frame {event.tracking_frame_id} with {len(event.hands)} hands.")
         for hand in event.hands:
             
-            attributes = dir(hand.arm)
+            attributes = dir(event)
 
             # # Print each attribute and its value
             for attribute in attributes:
                 # Exclude attributes that start with '__' (internal attributes)
                 if not attribute.startswith('__'):
-                    value = getattr(hand.arm, attribute)
+                    value = getattr(event, attribute)
                     print(f"{attribute}: {value}")
             hand_type = "left" if str(hand.type) == "HandType.Left" else "right"
         #     print(
