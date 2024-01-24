@@ -20,7 +20,7 @@ class RealTime3DPlot(QMainWindow):
 
     def initUI(self):
         self.setWindowTitle('Real-Time 3D Plot')
-        self.setGeometry(100, 100, 800, 600)
+        self.setGeometry(600, 600, 1800, 1600)
 
         self.centralWidget = QWidget(self)
         self.setCentralWidget(self.centralWidget)
