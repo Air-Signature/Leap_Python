@@ -56,7 +56,7 @@ class RealTime3DPlot(QMainWindow):
         self.canvas.mpl_connect('pick_event', self.on_pick)
 
         zoom_func = self.zoom_factory(self.ax)
-        # self.canvas.mpl_connect('scroll_event', zoom_func)
+        self.canvas.mpl_connect('scroll_event', zoom_func)
 
         self.show()
 
