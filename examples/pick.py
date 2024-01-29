@@ -62,13 +62,13 @@ class RealTime3DPlot(QMainWindow):
 
     def on_pick(self, event):
         ind = list(set(event.ind))  # Convert to set to eliminate duplicates
-        print(event.mouseevent.xdata, event.mouseevent.ydata)
-        print(ind)
+        # print(event.mouseevent.xdata, event.mouseevent.ydata)
+        # print(ind)
 
         
         for i in ind:
             frame_id = self.df.at[self.df.index[i], 'frame_id']
-            print(frame_id)
+            # print(frame_id)
             self.frame_id_list.append(frame_id)
             self.df.drop(self.df.index[i], inplace=True)
 
@@ -106,7 +106,7 @@ class RealTime3DPlot(QMainWindow):
 
         #update coordinates target
         for fid in self.frame_id_list:
-            print(fid)
+            # print(fid)
             try:
                 self.new_df.at[self.new_df.loc[self.new_df['frame_id'] == fid].index[0], 'target'] = 0
 
@@ -122,7 +122,7 @@ class RealTime3DPlot(QMainWindow):
 
 def main():
     FileName = input("Enter File Name : ")
-    csv_file_path = 'Signatures/{FileName}.csv'.format(FileName = FileName)
+    csv_file_path = 'Signatures/PSmith/{FileName}.csv'.format(FileName = FileName)
     app = QApplication(sys.argv)
     df = pd.read_csv(csv_file_path)
     df = df.loc[df['target'] != 0]

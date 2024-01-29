@@ -32,7 +32,7 @@ class Canvas:
     def __init__(self):
         self.name = "Visualiser"
         self.screen_size = [600, 900]
-        self.hands_colour = 	(0, 0, 255)
+        self.hands_colour = (0, 0, 255)
         self.font_colour = (0, 255, 44)
         self.hands_format = "Skeleton"
         self.output_image = np.zeros((self.screen_size[0], self.screen_size[1], 3), np.uint8)
@@ -146,7 +146,7 @@ class Canvas:
                             1,
                         )
                     
-                    if (hand.index.is_extended and hand.middle.is_extended==0 and hand.ring.is_extended==0 and hand.pinky.is_extended and hand.thumb.is_extended):
+                    if (hand.index.is_extended and hand.middle.is_extended and hand.ring.is_extended and hand.pinky.is_extended ==0 and hand.thumb.is_extended ==0):
                         self.clearCanvas = True
                         self.drawingMode = False
 
