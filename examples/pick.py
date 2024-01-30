@@ -122,7 +122,7 @@ class RealTime3DPlot(QMainWindow):
 
 def main():
     FileName = input("Enter File Name : ")
-    csv_file_path = 'Signatures/Ashiga/{FileName}.csv'.format(FileName = FileName)
+    csv_file_path = 'Signatures/Laksika/{FileName}.csv'.format(FileName = FileName)
     app = QApplication(sys.argv)
     df = pd.read_csv(csv_file_path)
     df = df.loc[df['target'] != 0]
