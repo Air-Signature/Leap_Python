@@ -308,6 +308,7 @@ def main():
             
             # cv2.imshow("Imagecanvas", canvas.ImageCanvas)
             # cv2.imshow("canvas3", canvas3)
+            color = (0, 255, 0)
 
             x2,y2 = canvas.position
             # X,Y,Z = canvas.actual_position
@@ -331,6 +332,27 @@ def main():
                 finger_rotation = canvas.fingertip_rotation
                 target = 1
                 
+                
+                
+                                    # Write data line by line
+                X,Y,Z = canvas.actual_position
+                    
+                if(Y<175):
+                    color = (0,0,255)
+                    text = "MOVE YOUR HAND UP!!"
+
+                    # Define the position where the text will be placed
+                    position = (50, 100)
+
+                    # Choose the font type and size
+                    font = cv2.FONT_HERSHEY_SIMPLEX
+                    font_size = 2
+                    font_color = (0,0,255)  # White color in BGR format
+                    font_thickness = 3
+
+                    # Use cv2.putText() to add text to the image
+                    cv2.putText(frame, text, position, font, font_size, font_color, font_thickness)
+                
                 ax = arm_position.x
                 ay = arm_position.y
                 az = arm_position.z
@@ -353,8 +375,8 @@ def main():
                     csv_writer = csv.writer(csv_file)
 
 
-                    # Write data line by line
-                    X,Y,Z = canvas.actual_position
+
+                    
                     xv = (Actual_x2-Actual_x)*canvas.frameRate
                     yv = (Actual_y2-Actual_y)*canvas.frameRate
                     zv = (Actual_z2-Actual_z)*canvas.frameRate
@@ -378,7 +400,24 @@ def main():
             imgInv = cv2.cvtColor(imgInv, cv2.COLOR_GRAY2BGR)
             frame = cv2.bitwise_and(frame, imgInv)
             frame = cv2.bitwise_or(frame, imgCanvas)
+            
+            
+            x, y, w, h = 75, 250, 500, 250
 
+            # Draw the rectangle on the frame
+            # cv2.line(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+            start_point = (100, 300)
+            end_point = (750, 300)
+
+            # Define the color of the line in BGR format (here, it's red)
+            
+
+            
+            # Define the thickness of the line
+            thickness = 2
+
+            # Use the cv2.line() function to draw the line on the image
+            cv2.line(frame, start_point, end_point, color, thickness)
             # Show image
             cv2.imshow(canvas.name, frame)
 
