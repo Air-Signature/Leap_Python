@@ -75,7 +75,7 @@ class Canvas:
         else:
             return None
         
-
+# Added new Commit
     def render_hands(self, event):
         
         self.output_image[:, :] = 0
