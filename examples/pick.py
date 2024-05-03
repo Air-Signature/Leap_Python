@@ -116,7 +116,7 @@ class RealTime3DPlot(QMainWindow):
         now = datetime.now()
         date_time = now.strftime("%m.%d.%Y_%H.%M.%S")
         # csv_file_name = 'Signatures/{FileName}.csv'.format(FileName = self.csv_file_path+"_"+date_time)
-        csv_file_name = 'Signatures/1.csv'.format(FileName = self.csv_file_path)
+        csv_file_name = 'Signatures/updated_{FileName}.csv'.format(FileName = self.csv_file_path)
         
         self.new_df.to_csv(csv_file_name, index=False)
 
