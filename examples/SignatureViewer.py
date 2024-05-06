@@ -23,7 +23,7 @@ class RealTime3DPlot(QMainWindow):
 
   def initUI(self):
     self.setWindowTitle('Real-Time 3D Plot')
-    self.setGeometry(600, 600, 1800, 1600)
+    self.setGeometry(1600, 1600, 1800, 1600)
 
     self.centralWidget = QWidget(self)
     self.setCentralWidget(self.centralWidget)
@@ -32,8 +32,28 @@ class RealTime3DPlot(QMainWindow):
 
     self.fig = plt.Figure()
     self.ax = self.fig.add_subplot(111, projection='3d')
-    self.scatter = self.ax.scatter(self.df['index_x_coor'], self.df['index_y_coor'], self.df['index_z_coor'], c='r',
-                                   picker=True)
+
+    x_coords = self.df['index_x_coor']
+    y_coords = self.df['index_y_coor']
+    z_coords = self.df['index_z_coor']
+    targets = self.df['target']
+
+    # Initialize variables to track segment start indices
+    segment_start = 0
+
+    # Plot each segment separately
+    for i in range(1, len(targets)):
+        if targets[i] == 0:
+            # If target is 0, plot the current segment and move to the next one
+            plt.plot(x_coords[segment_start:i], y_coords[segment_start:i], '-',color='black', label=f'Segment {i - segment_start}')
+            segment_start = i + 1
+
+    # Plot the last segment (if any)
+    if segment_start < len(targets):
+        plt.plot(x_coords[segment_start:], y_coords[segment_start:], '-',color='black', label=f'Last Segment')
+
+    # self.plot = self.ax.plot(self.df['index_x_coor'], self.df['index_y_coor'], self.df['index_z_coor'], c='b',
+    #                                picker=True)
 
     # Set the same limits for all axes
     min_limit = min(min(self.df['index_x_coor']), min(self.df['index_y_coor']), min(self.df['index_z_coor']))
@@ -57,27 +77,11 @@ class RealTime3DPlot(QMainWindow):
 
     self.layout.addWidget(self.canvas)
 
-    self.canvas.mpl_connect('pick_event', self.on_pick)
-
     zoom_func = self.zoom_factory(self.ax)
     self.canvas.mpl_connect('scroll_event', zoom_func)
 
     self.show()
 
-  def on_pick(self, event):
-    ind = list(set(event.ind))  # Convert to set to eliminate duplicates
-    # print(event.mouseevent.xdata, event.mouseevent.ydata)
-    # print(ind)
-
-    for i in ind:
-      frame_id = self.df.at[self.df.index[i], 'frame_id']
-      # print(frame_id)
-      self.frame_id_list.append(frame_id)
-      self.df.drop(self.df.index[i], inplace=True)
-
-    # Update the scatter plot
-    self.scatter._offsets3d = (self.df['index_x_coor'], self.df['index_y_coor'], self.df['index_z_coor'])
-    self.canvas.draw()
 
   def zoom_factory(self, ax, base_scale=2.):
     def zoom_fun(event):
@@ -103,36 +107,17 @@ class RealTime3DPlot(QMainWindow):
 
     return zoom_fun
 
-  def save_dataframe_to_csv(self):
-
-    # update coordinates target
-    for fid in self.frame_id_list:
-      # print(fid)
-      try:
-        self.new_df.at[self.new_df.loc[self.new_df['frame_id'] == fid].index[0], 'target'] = 0
-
-
-      except IndexError:
-        pass
-    now = datetime.now()
-    date_time = now.strftime("%m.%d.%Y_%H.%M.%S")
-    # csv_file_name = 'Signatures/{FileName}.csv'.format(FileName = self.csv_file_path+"_"+date_time)
-    csv_file_name = 'Signatures/updated_{FileName}.csv'.format(FileName=self.csv_file_path)
-
-    self.new_df.to_csv(csv_file_name, index=False)
 
 
 def main():
-  FileName = input("Enter File Name : ")
-  csv_file_path = 'Signatures/{FileName}.csv'.format(FileName=FileName)
-  csv_file_path = 'Signatures/Gastro/{FileName}.csv'.format(FileName=FileName)
+  FileName = "Arujan"
+  csv_file_path = 'Signatures/{FileName}/updated_1.csv'.format(FileName=FileName)
   app = QApplication(sys.argv)
   df = pd.read_csv(csv_file_path)
   df = df.loc[df['target'] != 0]
   mainWindow = RealTime3DPlot(df, FileName)
 
   # Connect the save_dataframe_to_csv method to the application's aboutToQuit signal
-  app.aboutToQuit.connect(mainWindow.save_dataframe_to_csv)
 
   sys.exit(app.exec_())
 
