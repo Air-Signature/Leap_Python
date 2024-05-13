@@ -1,12 +1,16 @@
 
 import sys
+from turtle import xcor
 import matplotlib.pyplot as plt
+from matplotlib.typing import ColourType
 from mpl_toolkits.mplot3d import Axes3D
 from PyQt5.QtWidgets import QApplication, QMainWindow, QSizePolicy, QVBoxLayout, QWidget
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import pandas as pd
 import numpy as np
 from datetime import datetime
+
+from pyparsing import col
 
 
 class RealTime3DPlot(QMainWindow):
@@ -30,7 +34,7 @@ class RealTime3DPlot(QMainWindow):
 
     self.layout = QVBoxLayout(self.centralWidget)
 
-    self.fig = plt.Figure()
+    self.fig = plt.Figure(figsize=(30, 24))
     self.ax = self.fig.add_subplot(111, projection='3d')
 
     x_coords = self.df['index_x_coor']
@@ -39,38 +43,22 @@ class RealTime3DPlot(QMainWindow):
     targets = self.df['target']
 
     # Initialize variables to track segment start indices
-    segment_start = 0
 
-    # Plot each segment separately
-    for i in range(1, len(targets)):
-        if targets[i] == 0:
-            # If target is 0, plot the current segment and move to the next one
-            plt.plot(x_coords[segment_start:i], y_coords[segment_start:i], '-',color='black', label=f'Segment {i - segment_start}')
-            segment_start = i + 1
-
-    # Plot the last segment (if any)
-    if segment_start < len(targets):
-        plt.plot(x_coords[segment_start:], y_coords[segment_start:], '-',color='black', label=f'Last Segment')
-
-    # self.plot = self.ax.plot(self.df['index_x_coor'], self.df['index_y_coor'], self.df['index_z_coor'], c='b',
-    #                                picker=True)
-
-    # Set the same limits for all axes
-    min_limit = min(min(self.df['index_x_coor']), min(self.df['index_y_coor']), min(self.df['index_z_coor']))
-    max_limit = max(max(self.df['index_x_coor']), max(self.df['index_y_coor']), max(self.df['index_z_coor']))
-
-    # self.ax.set_xlim([min_limit, max_limit])
-    # self.ax.set_ylim([min_limit, max_limit])
-    # self.ax.set_zlim([min_limit, max_limit])
-
+    self.plot = self.ax.plot(x_coords, y_coords, z_coords, linestyle='-', color = 'blue',
+                                   alpha=0.5 ,linewidth='0')
+    self.plot = self.ax.plot(x_coords, y_coords, z_coords, marker = 'o', ms = 1, mfc = 'b', color = 'blue',
+                                   alpha=0.2)
+    
+    self.plot = self.ax.plot(x_coords, y_coords, z_coords, marker = 'o', ms = 4, mec = 'blue',
+                                    alpha=0.5)
     # Optional: Set the box aspect ratio to make the intervals equal
     self.ax.set_aspect('equal')
 
     self.ax.set_xlabel('X')
     self.ax.set_ylabel('Y')
-    self.ax.set_zlabel('Z')
+    self.ax.set_zlabel('Depth')
 
-    self.ax.view_init(elev=90, azim=-90)
+    self.ax.view_init(elev=120, azim=-120)
 
     self.canvas = FigureCanvas(self.fig)
     self.canvas.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -110,8 +98,8 @@ class RealTime3DPlot(QMainWindow):
 
 
 def main():
-  FileName = "Arujan"
-  csv_file_path = 'Signatures/{FileName}/updated_1.csv'.format(FileName=FileName)
+  FileName = "chathuva"
+  csv_file_path = 'Signatures/{FileName}/5.csv'.format(FileName=FileName)
   app = QApplication(sys.argv)
   df = pd.read_csv(csv_file_path)
   df = df.loc[df['target'] != 0]
