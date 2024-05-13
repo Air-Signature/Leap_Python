@@ -271,7 +271,7 @@ def main():
               'index_x_velocity','index_y_velocity','index_z_velocity',
               'palm_velocity_x','palm_velocity_y','palm_velocity_z','confidence',
               'hand_grab_angle','hand_grab_strength','armPosition_x','armPosition_y','armPosition_z','tip_rotation_x','tip_rotation_y','tip_rotation_z','tip_rotation_w','target']
-    csv_file_path = 'Sign/{FileName}.csv'.format(FileName = input("Enter File Count : "))
+    csv_file_path = './{FileName}.csv'.format(FileName = input("Enter File Name : "))
 
     with open(csv_file_path, 'w', newline='') as csv_file:
         # Create a CSV writer
