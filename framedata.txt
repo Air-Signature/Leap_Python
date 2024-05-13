@@ -1,7 +1,0 @@
-c_data: <cdata 'struct _LEAP_TRACKING_EVENT *' 0x0000020C0735A268>
-framerate: 46.3489875793457
-from_connection_message: <bound method Event.from_connection_message of <class 'leap.events.TrackingEvent'>>
-hands: []
-info: <leap.datatypes.FrameHeader object at 0x0000020C085049D0>
-metadata: <leap.events.EventMetadata object at 0x0000020C085049A0>
-timestamp: 682273745359 in micro seconds

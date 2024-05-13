@@ -1,9 +1,0 @@
-_data: <cdata 'struct _LEAP_DIGIT &' 0x00000240BF2A0C78>
-bones: [<leap.datatypes.Bone object at 0x00000240C183F490>, <leap.datatypes.Bone object at 0x00000240C183F730>, <leap.datatypes.Bone object at 0x00000240C183F5B0>, <leap.datatypes.Bone object at 0x00000240C183F6A0>]
-c_data: <cdata 'struct _LEAP_DIGIT &' 0x00000240BF2A0C78>
-distal: <leap.datatypes.Bone object at 0x00000240C183F730>
-finger_id: 1
-intermediate: <leap.datatypes.Bone object at 0x00000240C183F610>
-is_extended: 0
-metacarpal: <leap.datatypes.Bone object at 0x00000240C183F4C0>
-proximal: <leap.datatypes.Bone object at 0x00000240C183F790>

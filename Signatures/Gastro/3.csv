@@ -1,1 +1,0 @@
-frame_id,index_x_coor,index_y_coor,index_z_coor,palm_x_coor,palm_y_coor,palm_z_coor,index_x_velocity,index_y_velocity,index_z_velocity,palm_velocity_x,palm_velocity_y,palm_velocity_z,confidence,hand_grab_angle,hand_grab_strength,armPosition_x,armPosition_y,armPosition_z,tip_rotation_x,tip_rotation_y,tip_rotation_z,tip_rotation_w,target
