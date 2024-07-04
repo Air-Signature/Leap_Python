@@ -14,30 +14,29 @@ A new manner of performing signature where the user signs in air using free hand
 
 
 
-## Features
+## How it Works
 
-- Feature 1
-- Feature 2
-- Feature 3
+- Run the vizualier.py file in the examples folder.
+- The application will start to collect data by tracking the index finger.
+- A realtime vizualisation will be provided in the desktop.
 
-### Screenshot 1
+## Screenshots
 
-![Screenshot 1](sample.png)
+### Sample Signature
 
-### Screenshot 2
+![Sample Signature](sample.png)
 
-![Screenshot 2](Sample2.png)
+### Project Setup
+![Project Setup](Sample2.png)
 
 
-## Videos
-
-Watch the following videos to see the project in action:
-
-### Video 1
+## Demo Video
 
 <!-- ![Demo Video](demoVideo/demoVideo.mov) -->
 
 
+
+# Project Setup and other details
 <!--links-->
 [apache]: http://www.apache.org/licenses/LICENSE-2.0 "Apache V2 License"
 
