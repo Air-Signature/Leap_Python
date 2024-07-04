@@ -1,3 +1,43 @@
+# In - Air Signature
+
+![Project Logo](logo.png)
+
+A new manner of performing signature where the user signs in air using free hand movements.
+
+## Description
+
+- We need to accurately acquire user's signature while providing good user experience.
+
+- During In-Air Signature, a user's whole signature trajectory is recorded which includes pen-up as well as pen-down movements. 
+
+- Therefore we need to detect and remove pen-up strokes from the signature trajectory.
+
+
+
+## Features
+
+- Feature 1
+- Feature 2
+- Feature 3
+
+### Screenshot 1
+
+![Screenshot 1](sample.png)
+
+### Screenshot 2
+
+![Screenshot 2](Sample2.png)
+
+
+## Videos
+
+Watch the following videos to see the project in action:
+
+### Video 1
+
+<!-- ![Demo Video](demoVideo/demoVideo.mov) -->
+
+
 <!--links-->
 [apache]: http://www.apache.org/licenses/LICENSE-2.0 "Apache V2 License"
 
@@ -82,26 +122,9 @@ pip install -e leapc-python-api
 python examples/tracking_event_example.py
 ```
 
-## Contributing
 
-Our vision is to make it as easy as possible to design the best user experience for hand tracking. 
-We learn and are inspired by the creations from our open source community - any contributions you make are 
-greatly appreciated.
-
-1. Fork the Project
-2. Create your Feature Branch:  
-   git checkout -b feature/AmazingFeature
-3. Commit your Changes:  
-   git commit -m "Add some AmazingFeature"
-4. Push to the Branch:  
-   git push origin feature/AmazingFeature
-5. Open a Pull Request
 
 ## License
 
 Use of the LeapC Python Bindings is subject to the [Apache V2 License Agreement][apache].
 
-## Community Support
-
-Our [Discord Server][discord], [Github Discussions][github-discussions] and [Developer Forum][developer-forum] are 
-places where you are actively encouraged to share your questions, insights, ideas, feature requests and projects.
