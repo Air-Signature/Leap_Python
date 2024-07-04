@@ -32,7 +32,7 @@ A new manner of performing signature where the user signs in air using free hand
 
 ## Demo Video
 
-<!-- ![Demo Video](demoVideo/demoVideo.mov) -->
+![Demo Video](demoVideo.mov)
 
 
 
@@ -47,7 +47,7 @@ A new manner of performing signature where the user signs in air using free hand
 [github-discussions]: https://github.com/ultraleap/leapc-python-bindings/discussions "Github Discussions"
 
 <!--content-->
-# Gemini LeapC Python Bindings
+## Gemini LeapC Python Bindings
 
 [![mail](https://img.shields.io/badge/Contact-support%40ultraleap.com-00cf75)](mailto:support@ultraleap.com)
 [![discord](https://img.shields.io/badge/Discord-Server-blueviolet)][discord]
@@ -120,8 +120,6 @@ pip install leapc-cffi/dist/leapc_cffi-0.0.1.tar.gz
 pip install -e leapc-python-api
 python examples/tracking_event_example.py
 ```
-
-
 
 ## License
 
