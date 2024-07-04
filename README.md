@@ -4,6 +4,10 @@
 
 A new manner of performing signature where the user signs in air using free hand movements.
 
+## Demo Video
+
+https://github.com/Air-Signature/Leap_Python/assets/90085334/1ec555c4-cd38-410d-b5cc-0ef799ae7ce0
+
 ## Description
 
 - We need to accurately acquire user's signature while providing good user experience.
@@ -29,10 +33,6 @@ A new manner of performing signature where the user signs in air using free hand
 ### Project Setup
 ![Project Setup](Sample2.png)
 
-
-## Demo Video
-
-https://github.com/Air-Signature/Leap_Python/assets/90085334/1ec555c4-cd38-410d-b5cc-0ef799ae7ce0
 
 
 
