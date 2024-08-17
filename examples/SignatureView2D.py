@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import pandas as pd
 
-FileName = "Gastro"
-csv_file_path = 'Signatures/{FileName}/1.csv'.format(FileName=FileName)
+FileName = input("Enter File Name ")
+csv_file_path = 'Sign/{FileName}.csv'.format(FileName=FileName)
 
 df = pd.read_csv(csv_file_path)
 # Assuming df_1 is your DataFrame
