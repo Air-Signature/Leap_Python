@@ -2,6 +2,7 @@
 dist/
 venv/
 build/
+env/
 
 leapc-python-api/build
 leapc-python-api/dist
